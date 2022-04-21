@@ -155,4 +155,18 @@ class MemberRepositoryTest {
             System.out.println("byName = " + byName);
         }
     }
+    @Test
+    public void returnType() throws Exception  {
+        //given
+        Team team = new Team("teamA");
+        teamRepository.save(team);
+
+        Member m1 = new Member("AAA", 10);
+        m1.setTeam(team);
+        memberRepository.save(m1);
+
+        List<Member> findListMember = memberRepository.findListByUsername("AAA");
+        Member findMember = memberRepository.findMemberByUsername("AAA");
+        Optional<Member> findOptionalMember = memberRepository.findOptionalByUsername("AAA");
+    }
 }
