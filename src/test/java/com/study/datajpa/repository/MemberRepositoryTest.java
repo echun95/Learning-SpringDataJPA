@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -135,6 +136,23 @@ class MemberRepositoryTest {
         //then
         for (MemberDto dto : memberDto) {
             System.out.println("dto = " + dto);
+        }
+    }
+    @Test
+    public void findByNames() throws Exception  {
+        //given
+        Team team = new Team("teamA");
+        teamRepository.save(team);
+
+        Member m1 = new Member("AAA", 10);
+        m1.setTeam(team);
+        memberRepository.save(m1);
+
+        //when
+        List<Member> byNames = memberRepository.findByNames(Arrays.asList("AAA", "BBB"));
+        //then
+        for (Member byName : byNames) {
+            System.out.println("byName = " + byName);
         }
     }
 }
