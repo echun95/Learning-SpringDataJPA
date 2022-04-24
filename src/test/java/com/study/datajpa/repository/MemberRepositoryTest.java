@@ -6,6 +6,10 @@ import com.study.datajpa.entity.Team;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -168,5 +172,40 @@ class MemberRepositoryTest {
         List<Member> findListMember = memberRepository.findListByUsername("AAA");
         Member findMember = memberRepository.findMemberByUsername("AAA");
         Optional<Member> findOptionalMember = memberRepository.findOptionalByUsername("AAA");
+    }
+
+    @Test
+    public void paging() throws Exception  {
+        //given
+        memberRepository.save(new Member("member1", 10));
+        memberRepository.save(new Member("member2", 10));
+        memberRepository.save(new Member("member3", 10));
+        memberRepository.save(new Member("member4", 10));
+        memberRepository.save(new Member("member5", 10));
+
+        int age = 10;
+        PageRequest pageRequest =
+                PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username")); //0페이지에서 3개 가져오기
+
+        //when
+        Page<Member> page = memberRepository.findByAge(age, pageRequest);
+//        Slice<Member> page = memberRepository.findByAge(age, pageRequest); //totalCount X
+
+
+        Page<MemberDto> toMap = page.map(m -> new MemberDto(m.getId(), m.getUsername(), null));
+
+
+
+        //then
+        List<Member> members = page.getContent(); //3개
+        long totalCount = page.getTotalElements();
+
+        assertThat(members.size()).isEqualTo(3);
+        assertThat(totalCount).isEqualTo(5);
+        assertThat(page.getNumber()).isEqualTo(0); //현재 페이지 번호
+        assertThat(page.getTotalPages()).isEqualTo(2);//총 페이지 번호
+        assertThat(page.isFirst()).isTrue();//첫 페이지인지
+        assertThat(page.hasNext()).isTrue();//다음 페이지 존재 유무
+
     }
 }
