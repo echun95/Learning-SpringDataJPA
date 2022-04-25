@@ -35,7 +35,7 @@ class MemberRepositoryTest {
     EntityManager em;
 
     @Test
-    public void testMember() throws Exception  {
+    public void testMember() throws Exception {
         //given
         Member member = new Member("memberA");
         //when
@@ -49,7 +49,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    public void basicCRUD() throws Exception  {
+    public void basicCRUD() throws Exception {
         //given
         Member member1 = new Member("member1");
         Member member2 = new Member("member2");
@@ -76,7 +76,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    public void findByUsernameAndGreaterThen() throws Exception  {
+    public void findByUsernameAndGreaterThen() throws Exception {
         //given
         Member m1 = new Member("AAA", 10);
         Member m2 = new Member("AAA", 20);
@@ -91,7 +91,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    public void namedQuery() throws Exception  {
+    public void namedQuery() throws Exception {
         //given
         Member m1 = new Member("AAA", 10);
         Member m2 = new Member("BBB", 20);
@@ -103,8 +103,9 @@ class MemberRepositoryTest {
         //then
         assertThat(findMember.get(0)).isEqualTo(m1);
     }
+
     @Test
-    public void testQuery() throws Exception  {
+    public void testQuery() throws Exception {
         //given
         Member m1 = new Member("AAA", 10);
         Member m2 = new Member("BBB", 20);
@@ -112,12 +113,13 @@ class MemberRepositoryTest {
         memberRepository.save(m2);
 
         //when
-        List<Member> findMember = memberRepository.findUser("AAA",10);
+        List<Member> findMember = memberRepository.findUser("AAA", 10);
         //then
         assertThat(findMember.get(0)).isEqualTo(m1);
     }
+
     @Test
-    public void findUsernameList() throws Exception  {
+    public void findUsernameList() throws Exception {
         //given
         Member m1 = new Member("AAA", 10);
         Member m2 = new Member("BBB", 20);
@@ -131,8 +133,9 @@ class MemberRepositoryTest {
             System.out.println("s = " + s);
         }
     }
+
     @Test
-    public void findMemberDto() throws Exception  {
+    public void findMemberDto() throws Exception {
         //given
         Team team = new Team("teamA");
         teamRepository.save(team);
@@ -148,8 +151,9 @@ class MemberRepositoryTest {
             System.out.println("dto = " + dto);
         }
     }
+
     @Test
-    public void findByNames() throws Exception  {
+    public void findByNames() throws Exception {
         //given
         Team team = new Team("teamA");
         teamRepository.save(team);
@@ -165,8 +169,9 @@ class MemberRepositoryTest {
             System.out.println("byName = " + byName);
         }
     }
+
     @Test
-    public void returnType() throws Exception  {
+    public void returnType() throws Exception {
         //given
         Team team = new Team("teamA");
         teamRepository.save(team);
@@ -181,7 +186,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    public void paging() throws Exception  {
+    public void paging() throws Exception {
         //given
         memberRepository.save(new Member("member1", 10));
         memberRepository.save(new Member("member2", 10));
@@ -201,7 +206,6 @@ class MemberRepositoryTest {
         Page<MemberDto> toMap = page.map(m -> new MemberDto(m.getId(), m.getUsername(), null));
 
 
-
         //then
         List<Member> members = page.getContent(); //3개
         long totalCount = page.getTotalElements();
@@ -214,6 +218,7 @@ class MemberRepositoryTest {
         assertThat(page.hasNext()).isTrue();//다음 페이지 존재 유무
 
     }
+
     @Test
     public void bulkUpdate() {
         //given
@@ -235,7 +240,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    public void findMemberLazy() throws Exception  {
+    public void findMemberLazy() throws Exception {
         //given
         //member1 -> teamA
         //member2 -> teamB
@@ -263,7 +268,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    public void queryHint() throws Exception  {
+    public void queryHint() throws Exception {
         //given
         Member member = new Member("member1", 10);
         memberRepository.save(member);
@@ -275,8 +280,9 @@ class MemberRepositoryTest {
         findMember.setUsername("member2");
         em.flush();
     }
+
     @Test
-    public void lock() throws Exception  {
+    public void lock() throws Exception {
         //given
         Member member = new Member("member1", 10);
         memberRepository.save(member);
@@ -287,22 +293,46 @@ class MemberRepositoryTest {
         //then
     }
 
+    @Test
+    public void teamTest() throws Exception {
+        //given
+        Team teamA = new Team("teamA");
+        Team teamB = new Team("teamB");
+        teamRepository.save(teamA);
+        teamRepository.save(teamB);
 
+        Member member1 = new Member("member1", 10);
+        Member member2 = new Member("member2", 10);
+        Member member3 = new Member("member3", 10);
+        Member member4 = new Member("member4", 10);
+        member1.setTeam(teamA);
+        member2.setTeam(teamA);
+        member3.setTeam(teamB);
+        member4.setTeam(teamB);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+        memberRepository.save(member3);
+        memberRepository.save(member4);
+        em.flush();
+        em.clear();
+        //when
+        List<Team> teams = teamRepository.findAll();
 
+        //then
+        for (Team team : teams) {
+            System.out.println("team = " + team);
+            System.out.println("team.getMembers = " + team.getMembers());
+        }
+    }
 
+    @Test
+    public void callCustom() throws Exception {
+        //given
+        List<Member> result = memberRepository.findMemberCustom();
+        //when
 
-
-
-
-
-
-
-
-
-
-
-
-
+        //then
+    }
 
 
 }
